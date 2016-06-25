@@ -1,27 +1,36 @@
+import runParallel from 'run-parallel';
 class CloudinaryStorage {
 
   constructor(opts) {
     if (!opts || !opts.cloudinary)
       throw new Error('`cloudinary` option required');
     this.cloudinary = opts.cloudinary;
-    this.getFolder = opts.folder || this._noop;
     this.getFilename = opts.filename || this._noop;
+
+    if (typeof opts.folder === 'string') {
+      this.getFolder = this._staticVal(opts.folder);
+    } else if (typeof opts.folder === 'function') {
+      this.getFolder = opts.folder;
+    } else {
+      this.getFolder = this._noop;
+    }
   }
 
   _handleFile(req, file, cb) {
-    this.getDestination(req, file, (err, folder) => {
-      if (err) cb(err);
-      this.getFilename(req, file, (err, filename) => {
-        if (err) cb(err);
 
+    runParallel(
+      [
+        this.getFolder,
+        this.getFilename
+      ],
+      (err, results) => {
         const stream = this.cloudinary.v2.uploader.upload_stream({
-          folder: folder,
-          public_id: filename
+          folder: results[0],
+          public_id: results[1]
         }, cb);
 
         file.stream.pipe(stream);
       });
-    });
   }
 
   _removeFile(req, file, cb) {
@@ -32,7 +41,7 @@ class CloudinaryStorage {
     cb();
   }
 
-  _retStatic(val) {
+  _staticVal(val) {
     return function (_, __, cb) {
       cb(null, val);
     };
