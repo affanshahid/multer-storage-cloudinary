@@ -16,7 +16,7 @@ gulp.task('copy', () => {
 gulp.task('build', ['copy', 'transpile']);
 
 gulp.task('test', () => {
-  return gulp.src('test/**/*.js')
+  return gulp.src('test/*.js')
     .pipe(mocha({
       compilers: ['js:babel-core/register']
     }));

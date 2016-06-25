@@ -13,14 +13,16 @@ class CloudinaryStorage {
     this.getType = this._getParamGetter('type', 'string', opts);
     this.getFormat = this._getParamGetter('format', 'string', opts);
     this.getParams = this._getParamGetter('params', 'object', opts);
+    this.getAllowedFormats = this._getParamGetter('allowedFormats', 'array',
+      opts);
   }
 
   _getParamGetter(name, type, opts) {
     let param;
     if (typeof opts[name] === 'function') {
-      param = opts.transformation;
+      param = opts[name];
     } else if (type && typeof opts[name] === type) {
-      param = this._staticVal(opts.transformation);
+      param = this._staticVal(opts[name]);
     } else if (opts[name] == undefined) {
       param = this._staticVal(undefined);
     } else {
@@ -40,24 +42,25 @@ class CloudinaryStorage {
 
     runParallel(
       [
-        this.getFolder,
-        this.getFilename,
-        this.getTransformation,
-        this.getType,
-        this.getFormat,
-        this.getParams
+        this.getParams.bind(this, req, file),
+        this.getFolder.bind(this, req, file),
+        this.getFilename.bind(this, req, file),
+        this.getTransformation.bind(this, req, file),
+        this.getType.bind(this, req, file),
+        this.getFormat.bind(this, req, file),
+        this.getAllowedFormats.bind(this, req, file)
       ],
       (err, results) => {
-        const params = results[5] || {
-          folder: results[0],
-          public_id: results[1],
-          transformation: results[2],
-          type: results[3],
-          format: results[4]
+        const params = results[0] || {
+          folder: results[1],
+          public_id: results[2],
+          transformation: results[3],
+          type: results[4],
+          format: results[5],
+          allowed_formats: results[6]
         };
-        
-        const stream = this.cloudinary.v2.uploader.upload_stream(params, cb);
 
+        const stream = this.cloudinary.v2.uploader.upload_stream(params, cb);
         file.stream.pipe(stream);
       });
   }

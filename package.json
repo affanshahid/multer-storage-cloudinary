@@ -1,6 +1,6 @@
 {
   "name": "multer-storage-cloudinary",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "A Cloudinary multer storage engine",
   "main": "lib/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "chai": "^3.5.0",
     "cloudinary": "^1.4.1",
     "eslint": "^2.13.0",
-    "express": "^4.14.0",
+    "form-data": "^1.0.0-rc4",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-mocha": "^2.2.0",
