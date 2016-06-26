@@ -8,12 +8,7 @@ gulp.task('transpile', () => {
     .pipe(gulp.dest('lib'));
 });
 
-gulp.task('copy', () => {
-  return gulp.src('src/**/*.json')
-    .pipe(gulp.dest('lib'));
-});
-
-gulp.task('build', ['copy', 'transpile']);
+gulp.task('build', ['transpile']);
 
 gulp.task('test', () => {
   return gulp.src('test/*.js')

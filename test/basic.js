@@ -18,6 +18,14 @@ describe('Cloundinary Storage', () => {
     allowedFormats: 'string',
     params: 1
   };
+  const validArgsMap = {
+    filename: () => {},
+    folder: 'string',
+    transformation: 'string',
+    format: 'string',
+    allowedFormats: ['jpg', 'png'],
+    params: {}
+  };
 
   afterEach(function (done) {
     this.timeout(10000);
@@ -155,6 +163,16 @@ describe('Cloundinary Storage', () => {
         opts[param] = invalidArgsMap[param];
         cloudinaryStorage(opts);
       }).to.throw();
+    });
+  }
+
+  for (let param in validArgsMap) {
+    it(`does not throw when a valid argument is supplied to '${param}'`, () => {
+      expect(() => {
+        const opts = { cloudinary };
+        opts[param] = validArgsMap[param];
+        cloudinaryStorage(opts);
+      }).to.not.throw();
     });
   }
 

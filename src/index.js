@@ -13,7 +13,7 @@ class CloudinaryStorage {
     this.getType = this._getParamGetter('type', 'string', opts);
     this.getFormat = this._getParamGetter('format', 'string', opts);
     this.getParams = this._getParamGetter('params', 'object', opts);
-    this.getAllowedFormats = this._getParamGetter('allowedFormats', 'array',
+    this.getAllowedFormats = this._getParamGetter('allowedFormats', 'object',
       opts);
   }
 
@@ -75,7 +75,7 @@ class CloudinaryStorage {
     };
   }
 }
-
+// not using 'export default' to allow compatibility with es5 require
 module.exports = function (opts) {
   return new CloudinaryStorage(opts);
 };
