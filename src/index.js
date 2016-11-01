@@ -9,7 +9,7 @@ class CloudinaryStorage {
     this.getFilename = this._getParamGetter('filename', undefined, opts);
     this.getFolder = this._getParamGetter('folder', 'string', opts);
     this.getTransformation = this._getParamGetter('transformation',
-      'string', opts);
+      'object', opts);
     this.getType = this._getParamGetter('type', 'string', opts);
     this.getFormat = this._getParamGetter('format', 'string', opts);
     this.getParams = this._getParamGetter('params', 'object', opts);
