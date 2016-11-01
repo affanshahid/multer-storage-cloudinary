@@ -66,7 +66,7 @@ Parameter | Description | Type
 `options.cloudinary` | A Cloudinary API object <br>The API must be configured by the user | `object` <br>**required**
 `options.filename` | The name of the file to be uploaded | `function`
 `options.folder` | The name of the Cloudinary folder to upload into | `string` or `function`
-`options.transformation` | Transformations to be applied - [Cloudinary API](https://github.com/cloudinary/cloudinary_npm#additional-resources) | `string` or `function`
+`options.transformation` | Transformations to be applied - [Cloudinary API](https://github.com/cloudinary/cloudinary_npm#additional-resources) | `array` or `function`
 `options.type` | Storage mode | `string` or `function`
 `options.format` | The format to convert the file into | `string` or `function`
 `options.allowedFormats` | A formats filter | `array` or `function`
