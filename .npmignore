@@ -3,3 +3,4 @@ src/
 working-directory/
 test/
 node_modules
+tsconfig.tsbuildinfo

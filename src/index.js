@@ -1,6 +1,5 @@
 import runParallel from 'run-parallel';
 class CloudinaryStorage {
-
   constructor(opts) {
     if (!opts || !opts.cloudinary)
       throw new Error('`cloudinary` option required');
@@ -8,13 +7,19 @@ class CloudinaryStorage {
 
     this.getFilename = this._getParamGetter('filename', undefined, opts);
     this.getFolder = this._getParamGetter('folder', 'string', opts);
-    this.getTransformation = this._getParamGetter('transformation',
-      'object', opts);
+    this.getTransformation = this._getParamGetter(
+      'transformation',
+      'object',
+      opts
+    );
     this.getType = this._getParamGetter('type', 'string', opts);
     this.getFormat = this._getParamGetter('format', 'string', opts);
     this.getParams = this._getParamGetter('params', 'object', opts);
-    this.getAllowedFormats = this._getParamGetter('allowedFormats', 'object',
-      opts);
+    this.getAllowedFormats = this._getParamGetter(
+      'allowedFormats',
+      'object',
+      opts
+    );
   }
 
   _getParamGetter(name, type, opts) {
@@ -32,14 +37,14 @@ class CloudinaryStorage {
       } else {
         errTemp = ` or 'undefined'`;
       }
-      throw new TypeError(`Expected opts.${name} to be of types 'function'` +
-        errTemp);
+      throw new TypeError(
+        `Expected opts.${name} to be of types 'function'` + errTemp
+      );
     }
     return param;
   }
 
   _handleFile(req, file, cb) {
-
     runParallel(
       [
         this.getParams.bind(this, req, file),
@@ -48,7 +53,7 @@ class CloudinaryStorage {
         this.getTransformation.bind(this, req, file),
         this.getType.bind(this, req, file),
         this.getFormat.bind(this, req, file),
-        this.getAllowedFormats.bind(this, req, file)
+        this.getAllowedFormats.bind(this, req, file),
       ],
       (err, results) => {
         const params = results[0] || {
@@ -57,12 +62,13 @@ class CloudinaryStorage {
           transformation: results[3],
           type: results[4],
           format: results[5],
-          allowed_formats: results[6]
+          allowed_formats: results[6],
         };
 
         const stream = this.cloudinary.v2.uploader.upload_stream(params, cb);
         file.stream.pipe(stream);
-      });
+      }
+    );
   }
 
   _removeFile(req, file, cb) {
