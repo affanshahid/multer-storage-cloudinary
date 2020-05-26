@@ -112,6 +112,11 @@ const storage = new CloudinaryStorage({
 });
 ```
 
+### Typescript
+
+This library is written is typescript and so provides all types necessary for use
+in a typescript project.
+
 ## Testing
 
 The Cloudinary API must be configured using the `CLOUDINARY_URL` environment variable in order to run the tests.
