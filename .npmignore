@@ -4,3 +4,8 @@ working-directory/
 test/
 node_modules
 tsconfig.tsbuildinfo
+.prettierrc
+.prettierignore
+tsconfig.json
+jest.config.js
+.eslintrc
