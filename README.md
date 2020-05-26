@@ -1,118 +1,114 @@
 # Multer Storage Cloudinary
+
 A multer storage engine for Cloudinary. Also consult the [Cloudinary API](https://github.com/cloudinary/cloudinary_npm).
 
 ## Installation
 
 ```sh
-npm install --save multer-storage-cloudinary
+npm install multer-storage-cloudinary
 ```
 
 ## Usage
 
 ```javascript
-var cloudinary = require('cloudinary');
-var cloudinaryStorage = require('multer-storage-cloudinary');
-var express = require('express');
-var multer = require('multer');
+const cloudinary = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const express = require('express');
+const multer = require('multer');
 
-var app = express();
+const app = express();
 
-var storage = cloudinaryStorage({
+const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  folder: 'folder-name',
-  allowedFormats: ['jpg', 'png'],
-  filename: function (req, file, cb) {
-    cb(undefined, 'my-file-name');
-  }
+  params: {
+    folder: 'some-folder-name',
+    format: (req, file) => 'png',
+    public_id: (req, file) => 'computed-filename-using-request',
+  },
 });
 
-var parser = multer({ storage: storage });
+const parser = multer({ storage: storage });
 
-app.post('/upload', parser.array('images', 10), function (req, res) {
-  console.log(req.files);
+app.post('/upload', parser.single('image'), function (req, res) {
+  res.json(req.file);
 });
 ```
 
 ### File properties
 
-File objects will expose (at least) the following properties provided by the [Cloudinary API](https://github.com/cloudinary/cloudinary_npm#upload):
+File objects will expose the following properties mapped from the [Cloudinary API](https://github.com/cloudinary/cloudinary_npm#upload):
 
-Key | Description
---- | ---
-`public_id` | Name of the file
-`format` | Extension of the stored file
-`url` | A URL for fetching the file
-`secure_url` | A secure URL for fetching the file
-`resource_type` | The type of the file
-`bytes` | Size of the file
-*NOTE: Many properties depend on the file type, to find out about the other exposed properties please check the Cloudinary API reference.*
+| Key        | Description                         |
+| ---------- | ----------------------------------- |
+| `filename` | public_id of the file on cloudinary |
+| `path`     | A URL for fetching the file         |
+| `size`     | Size of the file in bytes           |
 
 ### Options
 
-Upload parameters can be configured using the options object passed to the `multer-storage-cloudinary` function call.
+Storage can be configured using the `options` argument passed to the `CloudinaryStorage` constructor.
 
 ```javascript
-var cloudinaryStorage = require('multer-storage-cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-var storage = cloudinaryStorage({
-  // configuration options
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    // upload paramters
+  },
 });
 ```
 
 All parameters are optional except the configured Cloudinary API object:
 
-Parameter | Description | Type
---- | --- | ---
-`options.cloudinary` | A Cloudinary API object <br>The API must be configured by the user | `object` <br>**required**
-`options.filename` | The name of the file to be uploaded | `function`
-`options.folder` | The name of the Cloudinary folder to upload into | `string` or `function`
-`options.transformation` | Transformations to be applied - [Cloudinary API](https://github.com/cloudinary/cloudinary_npm#additional-resources) | `array` or `function`
-`options.type` | Storage mode | `string` or `function`
-`options.format` | The format to convert the file into | `string` or `function`
-`options.allowedFormats` | A formats filter | `array` or `function`
-`options.params` | An overriding object to directly supply all parameters | `object` or `function`
-*NOTE: For further guidance on all parameters: consult the Cloudinary documentation.*
+| Parameter            | Description                                                                                                                                                                                                                                           | Type                      |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `options.cloudinary` | A Cloudinary API object <br>The API must be configured by the user                                                                                                                                                                                    | `object` <br>**required** |
+| `options.params`     | An object or a function that resolves to an object which can contain any/all properties described in the [Cloudinary upload API docs](https://cloudinary.com/documentation/image_upload_api_reference#upload_method). Read below for more information | `object` or `function`    |
+
+Each property in the params object (either directly or resolved from the function)
+can either be a static value or an async function that resolves to the required value.
+All upload parameters specified in the [Cloudinary docs](https://cloudinary.com/documentation/image_upload_api_reference#upload_method) are supported.
+
+_Note: `public_id` is an exception in that it must always be a functional parameter_
 
 Functional parameters are called on every request and can be used in the following way:
 
 ```javascript
-var cloudinary = require('cloudinary');
-var cloudinaryStorage = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-var storage = cloudinaryStorage({
+const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  folder: function(request, file, callback) {
-    callback(undefined, 'my-value');
-  }
+  params: {
+    folder: (req, file) => 'folder_name',
+    format: async (req, file) => {
+      // async code using `req` and `file`
+      // ...
+      return 'jpeg';
+    },
+    public_id: (req, file) => 'some_unique_id',
+  },
 });
 ```
-#### options.params
-All Cloudinary upload parameters can be configured altogether using this. If a non-null value is provided(either directly or through the callback) all other options will be overriden.
 
-Example:
+You can also provide all params using a single function
+
 ```javascript
-var cloudinary = require('cloudinary');
-var cloudinaryStorage = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-var storage = cloudinaryStorage({
+const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  folder: 'folder', // will not be used
-  format: 'jpg', // will not be used
-  params: {
-    folder: 'foo',
-    format: 'png'
-  }
-});
-
-var anotherStorage = cloudinaryStorage({
-  cloudinary: cloudinary,
-  folder: 'folder',
-  format: 'jpg',
-  params: function(req, file, cb) {
-    var foo = undefined;
-    cb(undefined, foo); // other options will not be overriden
-                        // as long as foo is null
-  }
+  params: async (req, file) => {
+    // async code using `req` and `file`
+    // ...
+    return {
+      folder: 'folder_name',
+      format: 'jpeg',
+      public_id: 'some_unique_id',
+    };
+  },
 });
 ```
 
