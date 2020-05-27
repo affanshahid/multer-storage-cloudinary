@@ -68,7 +68,7 @@ export class CloudinaryStorage implements StorageEngine {
 
           const value =
             typeof getterOrValue === 'function'
-              ? getterOrValue(req, file)
+              ? await getterOrValue(req, file)
               : getterOrValue;
 
           uploadOptions[key] = value;

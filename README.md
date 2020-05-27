@@ -22,7 +22,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'some-folder-name',
-    format: (req, file) => 'png',
+    format: async (req, file) => 'png', // supports promises as well
     public_id: (req, file) => 'computed-filename-using-request',
   },
 });
@@ -70,7 +70,7 @@ Each property in the params object (either directly or resolved from the functio
 can either be a static value or an async function that resolves to the required value.
 All upload parameters specified in the [Cloudinary docs](https://cloudinary.com/documentation/image_upload_api_reference#upload_method) are supported.
 
-_Note: `public_id` is an exception in that it must always be a functional parameter_
+_Note: `public_id` is different in that it must always be a functional parameter_
 
 Functional parameters are called on every request and can be used in the following way:
 
