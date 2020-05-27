@@ -84,6 +84,38 @@ describe('CloudinaryStorage', () => {
     expect(res.get('Content-Type')).toBe('image/jpeg');
   }, 15_000);
 
+  it('works with async functional params', async () => {
+    const storage = new CloudinaryStorage({
+      cloudinary,
+      params: {
+        folder: (req, file) => {
+          return new Promise((resolve) => {
+            expect(req).toBeDefined();
+            expect(file).toBeDefined();
+            resolve(FOLDER);
+          });
+        },
+        format: async (req, file) => {
+          expect(req).toBeDefined();
+          expect(file).toBeDefined();
+          return 'jpeg';
+        },
+      },
+    });
+    const parser = multer({ storage }).single('image');
+
+    const form = new FormData();
+    form.append('image', getImageStream());
+
+    const req = await runMiddleware(parser, form);
+    expect(req.file).not.toBeUndefined();
+    expect(req.file!.path).toContain(FOLDER + '/');
+
+    const res = await superagent.get(req.file!.path);
+    expect(res.status).toBe(200);
+    expect(res.get('Content-Type')).toBe('image/jpeg');
+  }, 15_000);
+
   it('removes uploaded files on error', async () => {
     const storage = new CloudinaryStorage({
       cloudinary,
