@@ -1,4 +1,8 @@
-import Cloudinary, { UploadApiOptions, UploadApiResponse } from 'cloudinary';
+import {
+  UploadApiOptions,
+  UploadApiResponse,
+  v2 as Cloudinary,
+} from 'cloudinary';
 import type { Request } from 'express';
 import type { StorageEngine } from 'multer';
 
@@ -91,7 +95,7 @@ export class CloudinaryStorage implements StorageEngine {
     file: File,
     callback: (error: Error) => void
   ): void {
-    this.cloudinary.v2.uploader.destroy(
+    this.cloudinary.uploader.destroy(
       file.filename,
       { invalidate: true },
       callback
@@ -103,7 +107,7 @@ export class CloudinaryStorage implements StorageEngine {
     file: File
   ): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
-      const stream = this.cloudinary.v2.uploader.upload_stream(
+      const stream = this.cloudinary.uploader.upload_stream(
         opts,
         (err, response) => {
           if (err != null) return reject(err);

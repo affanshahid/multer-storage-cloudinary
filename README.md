@@ -11,7 +11,7 @@ npm install multer-storage-cloudinary
 ## Usage
 
 ```javascript
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const express = require('express');
 const multer = require('multer');
@@ -75,7 +75,7 @@ _Note: `public_id` is different in that it must always be a functional parameter
 Functional parameters are called on every request and can be used in the following way:
 
 ```javascript
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const storage = new CloudinaryStorage({
@@ -95,7 +95,7 @@ const storage = new CloudinaryStorage({
 You can also provide all params using a single function
 
 ```javascript
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const storage = new CloudinaryStorage({

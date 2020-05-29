@@ -1,4 +1,4 @@
-import cloudinary from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import FormData from 'form-data';
 import multer from 'multer';
 import superagent from 'superagent';
@@ -9,7 +9,7 @@ const FOLDER = 'multer_tests';
 
 describe('CloudinaryStorage', () => {
   afterEach(async () => {
-    await cloudinary.v2.api.delete_resources_by_prefix(FOLDER + '/', {});
+    await cloudinary.api.delete_resources_by_prefix(FOLDER + '/', {});
   }, 15_000);
 
   it('uploads files', async () => {
@@ -129,7 +129,7 @@ describe('CloudinaryStorage', () => {
     try {
       await runMiddleware(parser, form);
     } catch {
-      const { resources } = await cloudinary.v2.api.resources({
+      const { resources } = await cloudinary.api.resources({
         type: 'upload',
         prefix: FOLDER + '/',
       });
