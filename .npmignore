@@ -9,3 +9,6 @@ tsconfig.tsbuildinfo
 tsconfig.json
 jest.config.js
 .eslintrc
+examples/
+.vscode/
+README.md
