@@ -7,10 +7,8 @@ import type { Request } from 'express';
 import type { StorageEngine } from 'multer';
 
 type KnownKeys<T> = {
-  [K in keyof T]: string extends K ? never : number extends K ? never : K;
-} extends { [_ in keyof T]: infer U }
-  ? U
-  : never;
+  [K in keyof T]: T[K] extends string | number ? K : never;
+}[keyof T];
 
 type File = Express.Multer.File;
 type PickedUploadApiOptions = Pick<
@@ -111,7 +109,7 @@ export class CloudinaryStorage implements StorageEngine {
         opts,
         (err, response) => {
           if (err != null) return reject(err);
-          return resolve(response);
+          return resolve(response as UploadApiResponse);
         }
       );
 

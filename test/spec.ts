@@ -58,12 +58,12 @@ describe('CloudinaryStorage', () => {
     const storage = new CloudinaryStorage({
       cloudinary,
       params: {
-        folder: (req, file) => {
+        folder: (req: Express.Request, file: Express.Multer.File) => {
           expect(req).toBeDefined();
           expect(file).toBeDefined();
           return FOLDER;
         },
-        format: (req, file) => {
+        format: (req: Express.Request, file: Express.Multer.File) => {
           expect(req).toBeDefined();
           expect(file).toBeDefined();
           return 'jpeg';
@@ -88,14 +88,14 @@ describe('CloudinaryStorage', () => {
     const storage = new CloudinaryStorage({
       cloudinary,
       params: {
-        folder: (req, file) => {
+        folder: (req: Express.Request, file: Express.Multer.File) => {
           return new Promise((resolve) => {
             expect(req).toBeDefined();
             expect(file).toBeDefined();
             resolve(FOLDER);
           });
         },
-        format: async (req, file) => {
+        format: async (req: Express.Request, file: Express.Multer.File) => {
           expect(req).toBeDefined();
           expect(file).toBeDefined();
           return 'jpeg';
